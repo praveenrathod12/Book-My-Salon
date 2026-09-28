@@ -4,7 +4,9 @@ A complete salon discovery and appointment-booking platform. Customers find salo
 
 Built strictly with **Angular + ASP.NET Core Web API + Entity Framework Core + SQL Server**.
 
-> **Live Demo:** _add your Vercel URL here after deploying_ → `https://your-project.vercel.app`
+> **Live Demo:** https://book-my-salon-inky.vercel.app/
+>
+> The live site runs in **demo mode** (local mock data, no backend required). Log in with the demo accounts below to explore both the customer and salon-owner experiences.
 
 ---
 
