@@ -1,0 +1,39 @@
+.confirm-page {
+  max-width: 620px;
+}
+.success-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.check {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--success-bg);
+  color: var(--success);
+  font-size: 1.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+.ticket-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.ticket-grid .label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 0.15rem;
+}
+.confirm-actions {
+  flex-wrap: wrap;
+}
+@media (max-width: 520px) {
+  .ticket-grid {
+    grid-template-columns: 1fr;
+  }
+}

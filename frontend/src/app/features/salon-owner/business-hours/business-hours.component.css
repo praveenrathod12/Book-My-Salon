@@ -1,0 +1,27 @@
+.hour-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.hour-row:last-of-type {
+  border-bottom: none;
+}
+.day-name {
+  font-weight: 600;
+  width: 110px;
+}
+.closed-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+.time-input {
+  width: auto;
+  padding: 0.4rem 0.6rem;
+}

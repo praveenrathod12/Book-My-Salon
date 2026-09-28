@@ -1,0 +1,78 @@
+<div class="auth-page container">
+  <div class="auth-card card">
+    <div class="card-body">
+      <h2>Welcome back</h2>
+      <p class="muted mb">Log in to book appointments or manage your salon.</p>
+
+      @if (errorMsg()) {
+        <div class="alert alert-danger">{{ errorMsg() }}</div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="you@example.com"
+            [class.is-invalid]="form.controls.email.touched && form.controls.email.invalid"
+          />
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <div class="field-error">Enter a valid email address.</div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            formControlName="password"
+            placeholder="••••••••"
+            [class.is-invalid]="form.controls.password.touched && form.controls.password.invalid"
+          />
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <div class="field-error">Password is required.</div>
+          }
+        </div>
+
+        <button class="btn btn-primary btn-block" type="submit" [disabled]="loading()">
+          {{ loading() ? 'Signing in...' : 'Sign in' }}
+        </button>
+      </form>
+
+      <p class="muted text-center mt">
+        Don't have an account? <a routerLink="/register">Create one</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="demo-card card">
+    <div class="card-body">
+      <h3>Try the demo</h3>
+      <p class="muted">Use a ready-made account to explore both experiences.</p>
+      <div class="demo-account">
+        <div>
+          <strong>Customer</strong>
+          <div class="muted">{{ demo.customer.email }} · {{ demo.customer.password }}</div>
+        </div>
+        <button class="btn btn-outline btn-sm" type="button" (click)="fillDemo('customer')">Use</button>
+      </div>
+      <div class="demo-account">
+        <div>
+          <strong>Salon owner</strong>
+          <div class="muted">{{ demo.owner.email }} · {{ demo.owner.password }}</div>
+        </div>
+        <button class="btn btn-outline btn-sm" type="button" (click)="fillDemo('owner')">Use</button>
+      </div>
+      @if (!isDemo) {
+        <p class="muted" style="font-size:0.8rem;margin-top:0.75rem">
+          These accounts are seeded in the backend database. Make sure the API is running.
+        </p>
+      }
+    </div>
+  </div>
+</div>

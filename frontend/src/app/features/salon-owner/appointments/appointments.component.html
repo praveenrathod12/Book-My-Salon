@@ -1,0 +1,50 @@
+<div class="container page">
+  <h1>Appointments</h1>
+  <p class="muted mb">View and manage all bookings at your salon.</p>
+
+  <div class="tabs mb">
+    @for (f of filters; track f.key) {
+      <button class="tab" [class.active]="activeFilter() === f.key" (click)="setFilter(f.key)">{{ f.label }}</button>
+    }
+  </div>
+
+  @if (loading()) {
+    <app-spinner label="Loading appointments..." />
+  } @else if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  } @else if (appointments().length === 0) {
+    <app-empty-state icon="🗓️" title="No appointments" message="Nothing matches this filter yet." />
+  } @else {
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>Date</th><th>Time</th><th>Customer</th><th>Service</th><th>Barber</th><th>Status</th><th>Amount</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (a of appointments(); track a.id) {
+            <tr>
+              <td>{{ a.appointmentDate | prettyDate }}</td>
+              <td>{{ a.startTime | prettyTime }}</td>
+              <td>{{ a.customerName }}</td>
+              <td>{{ a.serviceName }}</td>
+              <td>{{ a.barberName }}</td>
+              <td><app-status-badge [status]="a.status" /></td>
+              <td>{{ a.amount | inr }}</td>
+              <td>
+                @if (canManage(a)) {
+                  <div class="flex gap-sm">
+                    <button class="btn btn-outline btn-sm" (click)="updateStatus(a, 'COMPLETED')" [disabled]="updating() === a.id">Complete</button>
+                    <button class="btn btn-ghost btn-sm" (click)="updateStatus(a, 'NO_SHOW')" [disabled]="updating() === a.id">No-show</button>
+                    <button class="btn btn-danger btn-sm" (click)="updateStatus(a, 'CANCELLED')" [disabled]="updating() === a.id">Cancel</button>
+                  </div>
+                } @else {
+                  <span class="muted">—</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,0 +1,66 @@
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow">Skip the wait</span>
+      <h1>Book your next haircut without the guesswork.</h1>
+      <p>
+        See which salons are free right now, compare services and prices, and lock in a slot in
+        seconds. No more walking in only to wait an hour.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" routerLink="/salons">Explore salons</a>
+        @if (!isAuthenticated()) {
+          <a class="btn btn-outline" routerLink="/register">Create account</a>
+        } @else if (isOwner()) {
+          <a class="btn btn-outline" routerLink="/owner/dashboard">Owner dashboard</a>
+        } @else {
+          <a class="btn btn-outline" routerLink="/customer/bookings">My bookings</a>
+        }
+      </div>
+    </div>
+    <div class="hero-card card">
+      <div class="card-body">
+        <div class="flex-between">
+          <div>
+            <strong>Style Studio</strong>
+            <div class="muted">⭐ 4.6 · Bengaluru</div>
+          </div>
+          <span class="badge badge-success">Open now</span>
+        </div>
+        <div class="hero-slots">
+          <span class="slot slot-selected">5:00 PM</span>
+          <span class="slot">5:30 PM</span>
+          <span class="slot slot-disabled">6:00 PM</span>
+          <span class="slot">6:30 PM</span>
+        </div>
+        <p class="muted" style="margin:0.75rem 0 0">Haircut from ₹250 · 30 min</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container page">
+  <h2 class="text-center">Everything you need to book smarter</h2>
+  <p class="text-center muted mb">A modern booking flow for customers and a full management suite for salon owners.</p>
+  <div class="grid grid-cards mt">
+    @for (f of features; track f.title) {
+      <div class="card card-hover">
+        <div class="card-body">
+          <div class="feature-icon">{{ f.icon }}</div>
+          <h3>{{ f.title }}</h3>
+          <p class="muted">{{ f.text }}</p>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="cta card mt-lg">
+    <div class="card-body flex-between flex-wrap">
+      <div>
+        <h3 style="margin:0">Own a salon?</h3>
+        <p class="muted" style="margin:0.25rem 0 0">Manage barbers, services, schedules and appointments in one place.</p>
+      </div>
+      <a class="btn btn-primary" routerLink="/register">Register your salon</a>
+    </div>
+  </div>
+</section>

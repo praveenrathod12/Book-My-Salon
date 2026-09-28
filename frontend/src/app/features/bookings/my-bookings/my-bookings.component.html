@@ -1,0 +1,71 @@
+<div class="container page">
+  <div class="flex-between mb">
+    <h1>My bookings</h1>
+  </div>
+
+  <div class="tabs mb">
+    <button class="tab" [class.active]="tab() === 'upcoming'" (click)="setTab('upcoming')">Upcoming</button>
+    <button class="tab" [class.active]="tab() === 'history'" (click)="setTab('history')">History</button>
+  </div>
+
+  @if (loading()) {
+    <app-spinner label="Loading bookings..." />
+  } @else if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  } @else if (bookings().length === 0) {
+    <app-empty-state
+      icon="📅"
+      [title]="tab() === 'upcoming' ? 'No upcoming bookings' : 'No past bookings'"
+      [message]="tab() === 'upcoming' ? 'Book an appointment to see it here.' : 'Your completed and cancelled bookings will show here.'"
+    />
+    @if (tab() === 'upcoming') {
+      <div class="text-center">
+        <a class="btn btn-primary" routerLink="/salons">Find a salon</a>
+      </div>
+    }
+  } @else {
+    <div class="booking-list">
+      @for (a of bookings(); track a.id) {
+        <div class="card booking-item">
+          <div class="card-body">
+            <div class="flex-between flex-wrap">
+              <div>
+                <div class="flex gap-sm" style="align-items:center">
+                  <h3 style="margin:0">{{ a.serviceName }}</h3>
+                  <app-status-badge [status]="a.status" />
+                </div>
+                <p class="muted" style="margin:0.35rem 0 0">
+                  {{ a.salonName }} · with {{ a.barberName }}
+                </p>
+                <p style="margin:0.35rem 0 0">
+                  📅 {{ a.appointmentDate | prettyDate }} · 🕒 {{ a.startTime | prettyTime }} – {{ a.endTime | prettyTime }}
+                </p>
+                @if (a.cancellationReason) {
+                  <p class="muted" style="margin:0.35rem 0 0;font-size:0.85rem">Reason: {{ a.cancellationReason }}</p>
+                }
+              </div>
+              <div class="booking-actions">
+                <strong class="amount">{{ a.amount | inr }}</strong>
+                <a class="btn btn-outline btn-sm" [routerLink]="['/customer/bookings', a.id]">Details</a>
+                @if (canCancel(a)) {
+                  <button class="btn btn-outline btn-sm" (click)="openReschedule(a)">Reschedule</button>
+                  <button class="btn btn-danger btn-sm" (click)="cancel(a)" [disabled]="cancelling() === a.id">
+                    {{ cancelling() === a.id ? '...' : 'Cancel' }}
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@if (rescheduleTarget(); as target) {
+  <app-reschedule-modal
+    [appointment]="target"
+    (closed)="rescheduleTarget.set(null)"
+    (rescheduled)="onRescheduled()"
+  />
+}

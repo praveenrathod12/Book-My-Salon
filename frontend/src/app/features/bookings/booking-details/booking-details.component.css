@@ -1,0 +1,17 @@
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.detail-rows {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+.detail-rows .label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 0.15rem;
+}

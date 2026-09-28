@@ -1,0 +1,114 @@
+<div class="container page">
+  @if (loading()) {
+    <app-spinner label="Loading salon..." />
+  } @else if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+    <a class="btn btn-outline" routerLink="/salons">← Back to salons</a>
+  } @else if (salon()) {
+    @if (salon(); as s) {
+    <a class="back-link" routerLink="/salons">← All salons</a>
+
+    <div class="salon-hero card">
+      <div class="card-body">
+        <div class="flex-between flex-wrap">
+          <div>
+            <h1>{{ s.name }}</h1>
+            <p class="muted" style="margin:0.25rem 0">📍 {{ s.address }}, {{ s.city }}, {{ s.state }} {{ s.postalCode }}</p>
+            <div class="hero-badges">
+              <span class="badge badge-warning">⭐ {{ s.rating || '—' }}</span>
+              <span class="badge badge-info">{{ services().length }} services</span>
+              <span class="badge badge-muted">{{ barbers().length }} barbers</span>
+              @if (s.phoneNumber) {
+                <span class="badge badge-muted">📞 {{ s.phoneNumber }}</span>
+              }
+            </div>
+          </div>
+          @if (isCustomer() || !isAuthenticated()) {
+            <button class="btn btn-primary" (click)="book()">Book appointment</button>
+          }
+        </div>
+        @if (s.description) {
+          <p class="description">{{ s.description }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-main">
+        <section class="card">
+          <div class="card-body">
+            <h2>Services</h2>
+            @if (services().length === 0) {
+              <p class="muted">No services listed yet.</p>
+            } @else {
+              <div class="service-list">
+                @for (svc of services(); track svc.id) {
+                  <div class="service-row">
+                    <div>
+                      <strong>{{ svc.name }}</strong>
+                      @if (svc.description) {
+                        <div class="muted service-desc">{{ svc.description }}</div>
+                      }
+                      <div class="muted service-meta">⏱ {{ svc.durationInMinutes }} min</div>
+                    </div>
+                    <div class="service-action">
+                      <span class="price">{{ svc.price | inr }}</span>
+                      @if (isCustomer() || !isAuthenticated()) {
+                        <button class="btn btn-outline btn-sm" (click)="book(svc.id)">Book</button>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="card mt">
+          <div class="card-body">
+            <h2>Our barbers</h2>
+            @if (barbers().length === 0) {
+              <p class="muted">No barbers listed yet.</p>
+            } @else {
+              <div class="barber-grid">
+                @for (b of barbers(); track b.id) {
+                  <div class="barber-chip">
+                    <div class="barber-avatar">{{ b.name[0] }}</div>
+                    <div>
+                      <strong>{{ b.name }}</strong>
+                      <div class="muted" style="font-size:0.8rem">{{ b.experienceYears }} yrs exp</div>
+                      @if (b.offToday) {
+                        <span class="badge badge-warning" style="margin-top:0.25rem">Off today</span>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+
+      <aside class="detail-side">
+        <section class="card">
+          <div class="card-body">
+            <h2>Working hours</h2>
+            <ul class="hours-list">
+              @for (h of orderedHours(); track h.name) {
+                <li>
+                  <span>{{ h.name }}</span>
+                  @if (h.isClosed) {
+                    <span class="badge badge-danger">Closed</span>
+                  } @else {
+                    <span>{{ h.open | prettyTime }} – {{ h.close | prettyTime }}</span>
+                  }
+                </li>
+              }
+            </ul>
+          </div>
+        </section>
+      </aside>
+    </div>
+    }
+  }
+</div>

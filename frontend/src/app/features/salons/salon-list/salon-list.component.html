@@ -1,0 +1,60 @@
+<div class="container page">
+  <div class="list-header">
+    <div>
+      <h1>Find a salon</h1>
+      <p class="muted">Search by salon name, city or area and book in seconds.</p>
+    </div>
+  </div>
+
+  <div class="search-bar card">
+    <div class="card-body">
+      <div class="search-input">
+        <span>🔍</span>
+        <input
+          class="form-control"
+          [formControl]="search"
+          placeholder="Try 'Style Studio' or 'Bengaluru'"
+          aria-label="Search salons"
+        />
+      </div>
+    </div>
+  </div>
+
+  @if (state().loading) {
+    <app-spinner label="Loading salons..." />
+  } @else if (state().error) {
+    <div class="alert alert-danger">{{ state().error }}</div>
+  } @else if (state().salons.length === 0) {
+    <app-empty-state icon="🔎" title="No salons found" message="Try a different name or city." />
+  } @else {
+    <div class="grid grid-cards">
+      @for (salon of state().salons; track salon.id) {
+        <a class="card card-hover salon-card" [routerLink]="['/salons', salon.id]">
+          <div class="card-body">
+            <div class="flex-between">
+              <h3 class="salon-name">{{ salon.name }}</h3>
+              <span class="rating">⭐ {{ salon.rating || '—' }}</span>
+            </div>
+            <p class="muted salon-address">📍 {{ salon.address }}, {{ salon.city }}</p>
+
+            <div class="salon-meta">
+              <span class="badge badge-info">{{ salon.serviceCount }} services</span>
+              <span class="badge badge-muted">{{ salon.activeBarberCount }} barbers</span>
+            </div>
+
+            <div class="flex-between salon-footer">
+              <span class="price">
+                @if (salon.startingPrice != null) {
+                  From {{ salon.startingPrice | inr }}
+                } @else {
+                  Pricing on request
+                }
+              </span>
+              <span class="btn btn-primary btn-sm">View salon</span>
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>

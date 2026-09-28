@@ -1,0 +1,39 @@
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a class="brand" routerLink="/" (click)="closeMenu()">
+      <span class="brand-mark">✂</span>
+      <span class="brand-name">SalonHub</span>
+    </a>
+
+    @if (isDemo) {
+      <span class="demo-pill" title="Running on local demo data">DEMO</span>
+    }
+
+    <button class="nav-toggle" (click)="toggleMenu()" aria-label="Toggle menu">☰</button>
+
+    <div class="nav-links" [class.open]="menuOpen()">
+      @if (!isOwner()) {
+        <a routerLink="/salons" routerLinkActive="active" (click)="closeMenu()">Salons</a>
+      }
+
+      @if (isAuthenticated()) {
+        @if (isOwner()) {
+          <a routerLink="/owner/dashboard" routerLinkActive="active" (click)="closeMenu()">Dashboard</a>
+          <a routerLink="/owner/appointments" routerLinkActive="active" (click)="closeMenu()">Appointments</a>
+          <a routerLink="/owner/barbers" routerLinkActive="active" (click)="closeMenu()">Barbers</a>
+          <a routerLink="/owner/services" routerLinkActive="active" (click)="closeMenu()">Services</a>
+        } @else {
+          <a routerLink="/customer/bookings" routerLinkActive="active" (click)="closeMenu()">My Bookings</a>
+        }
+
+        <div class="nav-user">
+          <a class="avatar" routerLink="/profile" (click)="closeMenu()" [title]="user()?.name">{{ initials() }}</a>
+          <button class="btn btn-outline btn-sm" (click)="logout()">Logout</button>
+        </div>
+      } @else {
+        <a routerLink="/login" routerLinkActive="active" (click)="closeMenu()">Login</a>
+        <a class="btn btn-primary btn-sm" routerLink="/register" (click)="closeMenu()">Get Started</a>
+      }
+    </div>
+  </div>
+</nav>

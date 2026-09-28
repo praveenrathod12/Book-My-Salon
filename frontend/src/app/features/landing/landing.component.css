@@ -1,0 +1,66 @@
+.hero {
+  background: linear-gradient(160deg, #f5f3ff 0%, #eef2ff 55%, #f7f7fb 100%);
+  border-bottom: 1px solid var(--line);
+}
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2.5rem;
+  align-items: center;
+  padding: 3.5rem 0;
+}
+.eyebrow {
+  display: inline-block;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+}
+.hero-copy h1 {
+  font-size: 2.6rem;
+  letter-spacing: -0.02em;
+}
+.hero-copy p {
+  color: var(--muted);
+  font-size: 1.05rem;
+  max-width: 34rem;
+}
+.hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+.hero-card {
+  box-shadow: var(--shadow-lg);
+}
+.hero-slots {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.hero-slots .slot {
+  min-width: 72px;
+}
+.feature-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.cta {
+  background: linear-gradient(120deg, #faf5ff, #eff6ff);
+}
+
+@media (max-width: 820px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    padding: 2.5rem 0;
+  }
+  .hero-copy h1 {
+    font-size: 2rem;
+  }
+}

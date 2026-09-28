@@ -1,0 +1,113 @@
+<div class="container page">
+  @if (loading()) {
+    <app-spinner label="Loading booking..." />
+  } @else if (loadError()) {
+    <div class="alert alert-danger">{{ loadError() }}</div>
+    <a class="btn btn-outline" routerLink="/salons">← Back to salons</a>
+  } @else if (salon()) {
+    @if (salon(); as s) {
+    <a class="back-link" [routerLink]="['/salons', s.id]">← {{ s.name }}</a>
+    <h1>Book an appointment</h1>
+    <p class="muted mb">Choose a service, then pick an available time this week.</p>
+
+    <!-- Step 1: service -->
+    <section class="card">
+      <div class="card-body">
+        <h2 class="step-title"><span class="step-num">1</span> Select a service</h2>
+        @if (services().length === 0) {
+          <p class="muted">This salon has no services available.</p>
+        } @else {
+          <div class="service-picker">
+            @for (svc of services(); track svc.id) {
+              <button
+                type="button"
+                class="service-option"
+                [class.selected]="selectedServiceId() === svc.id"
+                (click)="selectService(svc.id)"
+              >
+                <div class="flex-between">
+                  <strong>{{ svc.name }}</strong>
+                  <span>{{ svc.price | inr }}</span>
+                </div>
+                <div class="muted" style="font-size:0.8rem">⏱ {{ svc.durationInMinutes }} min</div>
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Step 2: availability -->
+    @if (selectedService(); as svc) {
+      <section class="card mt">
+        <div class="card-body">
+          <h2 class="step-title"><span class="step-num">2</span> Pick a day &amp; time</h2>
+
+          @if (availabilityLoading()) {
+            <app-spinner label="Checking availability..." />
+          } @else if (availabilityError()) {
+            <div class="alert alert-danger">{{ availabilityError() }}</div>
+          } @else {
+            <div class="day-tabs">
+              @for (day of days(); track day.date; let i = $index) {
+                <button
+                  type="button"
+                  class="day-tab"
+                  [class.day-tab-active]="selectedDayIndex() === i"
+                  (click)="selectDay(i)"
+                >
+                  <strong>{{ dayShort(day.dayName) }}</strong>
+                  <small>{{ dayDate(day.date) }}</small>
+                </button>
+              }
+            </div>
+
+            @if (selectedDay(); as day) {
+              @if (day.isClosed) {
+                <div class="alert alert-info mt">The salon is closed on this day.</div>
+              } @else if (day.slots.length === 0) {
+                <div class="alert alert-info mt">No slots for this day.</div>
+              } @else {
+                <div class="slot-grid mt">
+                  @for (slot of day.slots; track slot.time) {
+                    <button
+                      type="button"
+                      class="slot"
+                      [class.slot-selected]="selectedSlot()?.time === slot.time"
+                      [class.slot-disabled]="!slot.available"
+                      [disabled]="!slot.available"
+                      (click)="selectSlot(slot)"
+                      [title]="slot.available ? slot.availableBarbers + ' barber(s) available' : 'Fully booked'"
+                    >
+                      {{ slot.time | prettyTime }}
+                      <small>{{ slot.available ? slot.availableBarbers + ' free' : 'Full' }}</small>
+                    </button>
+                  }
+                </div>
+              }
+            }
+          }
+        </div>
+      </section>
+
+      <!-- Step 3: confirm -->
+      @if (selectedSlot(); as slot) {
+        <section class="card mt confirm-card">
+          <div class="card-body flex-between flex-wrap">
+            <div>
+              <h3 style="margin:0">Confirm your booking</h3>
+              <p class="muted" style="margin:0.35rem 0 0">
+                {{ svc.name }} · {{ selectedDay()!.dayName }} {{ dayDate(selectedDay()!.date) }} ·
+                {{ slot.time | prettyTime }} · {{ svc.price | inr }}
+              </p>
+            </div>
+            <button class="btn btn-primary" (click)="confirm()" [disabled]="booking()">
+              {{ booking() ? 'Booking...' : 'Confirm booking' }}
+            </button>
+          </div>
+        </section>
+      }
+    }
+    }
+  }
+</div>

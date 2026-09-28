@@ -1,0 +1,56 @@
+.auth-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+  padding: 2.5rem 1.25rem 3rem;
+  max-width: 900px;
+}
+.auth-card,
+.demo-card {
+  width: 100%;
+}
+.demo-card {
+  background: linear-gradient(150deg, #faf5ff, #eff6ff);
+}
+.demo-account {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--line);
+}
+.demo-account .muted {
+  font-size: 0.82rem;
+  word-break: break-all;
+}
+
+@media (max-width: 780px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+}
+
+.role-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.role-option {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.12s ease;
+}
+.role-option input {
+  display: none;
+}
+.role-option.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}

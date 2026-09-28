@@ -1,0 +1,41 @@
+<div class="container page" style="max-width:640px">
+  @if (loading()) {
+    <app-spinner label="Loading booking..." />
+  } @else if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+    <a class="btn btn-outline" routerLink="/customer/bookings">← Back</a>
+  } @else if (appt()) {
+    @if (appt(); as a) {
+    <a class="back-link" routerLink="/customer/bookings">← My bookings</a>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="flex-between">
+          <h1 style="margin:0">Booking #{{ a.id }}</h1>
+          <app-status-badge [status]="a.status" />
+        </div>
+
+        <div class="detail-rows">
+          <div><span class="label">Salon</span><strong>{{ a.salonName }}</strong></div>
+          <div><span class="label">Service</span><strong>{{ a.serviceName }}</strong></div>
+          <div><span class="label">Barber</span><strong>{{ a.barberName }}</strong></div>
+          <div><span class="label">Date</span><strong>{{ a.appointmentDate | prettyDate }}</strong></div>
+          <div><span class="label">Time</span><strong>{{ a.startTime | prettyTime }} – {{ a.endTime | prettyTime }}</strong></div>
+          <div><span class="label">Amount</span><strong>{{ a.amount | inr }}</strong></div>
+          @if (a.cancellationReason) {
+            <div><span class="label">Cancellation reason</span><strong>{{ a.cancellationReason }}</strong></div>
+          }
+        </div>
+
+        @if (isCustomer() && canCancel()) {
+          <div class="mt">
+            <button class="btn btn-danger" (click)="cancel()" [disabled]="cancelling()">
+              {{ cancelling() ? 'Cancelling...' : 'Cancel appointment' }}
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+    }
+  }
+</div>

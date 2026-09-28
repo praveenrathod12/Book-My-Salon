@@ -1,0 +1,38 @@
+<div class="container page" style="max-width:680px">
+  <h1>Business hours</h1>
+  <p class="muted mb">Set opening and closing times for each day, or mark a day closed.</p>
+
+  @if (loading()) {
+    <app-spinner label="Loading..." />
+  } @else if (!hasSalon()) {
+    <app-empty-state icon="💈" title="No salon yet" message="Create your salon profile first." />
+    <div class="text-center"><a class="btn btn-primary" routerLink="/owner/salon">Create salon</a></div>
+  } @else {
+    <div class="card">
+      <div class="card-body">
+        @for (h of hours(); track h.dayOfWeek) {
+          <div class="hour-row">
+            <span class="day-name">{{ dayName(h.dayOfWeek) }}</span>
+            <label class="closed-toggle">
+              <input type="checkbox" [(ngModel)]="h.isClosed" />
+              Closed
+            </label>
+            @if (!h.isClosed) {
+              <input type="time" class="form-control time-input" [(ngModel)]="h.openTime" />
+              <span class="muted">to</span>
+              <input type="time" class="form-control time-input" [(ngModel)]="h.closeTime" />
+            } @else {
+              <span class="badge badge-danger">Closed all day</span>
+            }
+          </div>
+        }
+
+        <div class="mt">
+          <button class="btn btn-primary" (click)="save()" [disabled]="saving()">
+            {{ saving() ? 'Saving...' : 'Save hours' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

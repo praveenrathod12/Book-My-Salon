@@ -1,0 +1,57 @@
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.sched-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.sched-row:last-of-type {
+  border-bottom: none;
+}
+.day-name {
+  font-weight: 600;
+  width: 110px;
+}
+.off-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+.time-input {
+  width: auto;
+  padding: 0.4rem 0.6rem;
+}
+.leave-form {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.leave-form .form-control {
+  width: auto;
+  flex: 1 1 160px;
+}
+.leave-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.leave-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.leave-list li:last-child {
+  border-bottom: none;
+}

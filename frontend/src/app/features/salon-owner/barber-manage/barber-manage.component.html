@@ -1,0 +1,72 @@
+<div class="container page" style="max-width:760px">
+  <a class="back-link" routerLink="/owner/barbers">← All barbers</a>
+
+  @if (loading()) {
+    <app-spinner label="Loading..." />
+  } @else if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  } @else if (barber()) {
+    @if (barber(); as b) {
+    <h1>{{ b.name }}</h1>
+    <p class="muted mb">Configure weekly working hours and mark date-specific leave.</p>
+
+    <section class="card mb">
+      <div class="card-body">
+        <h2>Weekly schedule</h2>
+        @for (s of schedule(); track s.dayOfWeek) {
+          <div class="sched-row">
+            <span class="day-name">{{ dayName(s.dayOfWeek) }}</span>
+            <label class="off-toggle">
+              <input type="checkbox" [(ngModel)]="s.isOff" />
+              Day off
+            </label>
+            @if (!s.isOff) {
+              <input type="time" class="form-control time-input" [(ngModel)]="s.startTime" />
+              <span class="muted">to</span>
+              <input type="time" class="form-control time-input" [(ngModel)]="s.endTime" />
+            } @else {
+              <span class="badge badge-muted">Off</span>
+            }
+          </div>
+        }
+        <div class="mt">
+          <button class="btn btn-primary" (click)="saveSchedule()" [disabled]="savingSchedule()">
+            {{ savingSchedule() ? 'Saving...' : 'Save schedule' }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-body">
+        <h2>Leave / unavailability</h2>
+        <div class="leave-form">
+          <input type="date" class="form-control" [min]="today"
+            [ngModel]="newLeaveDate()" (ngModelChange)="newLeaveDate.set($event)" />
+          <input class="form-control" placeholder="Reason (optional)"
+            [ngModel]="newLeaveReason()" (ngModelChange)="newLeaveReason.set($event)" />
+          <button class="btn btn-primary" (click)="addLeave()" [disabled]="addingLeave()">
+            {{ addingLeave() ? '...' : 'Add leave' }}
+          </button>
+        </div>
+
+        @if (b.leaves.length === 0) {
+          <p class="muted mt">No upcoming leave recorded.</p>
+        } @else {
+          <ul class="leave-list mt">
+            @for (l of b.leaves; track l.id) {
+              <li>
+                <div>
+                  <strong>{{ l.leaveDate | prettyDate }}</strong>
+                  @if (l.reason) { <span class="muted"> — {{ l.reason }}</span> }
+                </div>
+                <button class="btn btn-ghost btn-sm" (click)="removeLeave(l.id)">Remove</button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </section>
+    }
+  }
+</div>

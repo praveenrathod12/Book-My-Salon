@@ -1,0 +1,64 @@
+<div class="container page" style="max-width:720px">
+  <h1>Salon profile</h1>
+  <p class="muted mb">{{ salon() ? 'Update your salon information.' : 'Create your salon to get started.' }}</p>
+
+  @if (loading()) {
+    <app-spinner label="Loading..." />
+  } @else {
+    <div class="card">
+      <div class="card-body">
+        <form [formGroup]="form" (ngSubmit)="save()">
+          <div class="form-group">
+            <label class="form-label">Salon name</label>
+            <input class="form-control" formControlName="name"
+              [class.is-invalid]="form.controls.name.touched && form.controls.name.invalid" />
+            @if (form.controls.name.touched && form.controls.name.invalid) {
+              <div class="field-error">Salon name is required.</div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" rows="3" formControlName="description"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Address</label>
+            <input class="form-control" formControlName="address" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">City</label>
+              <input class="form-control" formControlName="city" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <input class="form-control" formControlName="state" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Postal code</label>
+              <input class="form-control" formControlName="postalCode" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone number</label>
+              <input class="form-control" formControlName="phoneNumber" />
+            </div>
+          </div>
+
+          <div class="flex gap-sm">
+            <button class="btn btn-primary" type="submit" [disabled]="saving()">
+              {{ saving() ? 'Saving...' : salon() ? 'Save changes' : 'Create salon' }}
+            </button>
+            @if (salon()) {
+              <a class="btn btn-outline" routerLink="/owner/business-hours">Business hours →</a>
+            }
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

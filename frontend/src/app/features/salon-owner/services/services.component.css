@@ -1,0 +1,4 @@
+/* Uses global table/modal/button styles. */
+:host {
+  display: block;
+}

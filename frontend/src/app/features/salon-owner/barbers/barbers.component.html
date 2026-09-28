@@ -1,0 +1,117 @@
+<div class="container page">
+  <div class="flex-between mb flex-wrap">
+    <div>
+      <h1 style="margin:0">Barbers</h1>
+      <p class="muted" style="margin:0.25rem 0 0">Add barbers, assign services and manage availability.</p>
+    </div>
+    @if (hasSalon()) {
+      <button class="btn btn-primary" (click)="openCreate()">+ Add barber</button>
+    }
+  </div>
+
+  @if (loading()) {
+    <app-spinner label="Loading barbers..." />
+  } @else if (!hasSalon()) {
+    <app-empty-state icon="💈" title="No salon yet" message="Create your salon profile first." />
+    <div class="text-center"><a class="btn btn-primary" routerLink="/owner/salon">Create salon</a></div>
+  } @else if (barbers().length === 0) {
+    <app-empty-state icon="💇" title="No barbers yet" message="Add your first barber to start accepting bookings." />
+  } @else {
+    <div class="grid grid-cards">
+      @for (b of barbers(); track b.id) {
+        <div class="card barber-card">
+          <div class="card-body">
+            <div class="flex-between">
+              <div class="flex gap-sm" style="align-items:center">
+                <div class="barber-avatar">{{ b.name[0] }}</div>
+                <div>
+                  <strong>{{ b.name }}</strong>
+                  <div class="muted" style="font-size:0.8rem">{{ b.experienceYears }} yrs exp</div>
+                </div>
+              </div>
+              <span class="badge" [class.badge-success]="b.isActive" [class.badge-muted]="!b.isActive">
+                {{ b.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+
+            @if (b.offToday && b.isActive) {
+              <span class="badge badge-warning mt">Off today</span>
+            }
+
+            <div class="service-tags">
+              @for (name of b.serviceNames; track name) {
+                <span class="tag">{{ name }}</span>
+              }
+              @if (b.serviceNames.length === 0) {
+                <span class="muted" style="font-size:0.82rem">No services assigned</span>
+              }
+            </div>
+
+            <div class="flex gap-sm flex-wrap barber-actions">
+              <button class="btn btn-outline btn-sm" (click)="openEdit(b)">Edit</button>
+              <a class="btn btn-outline btn-sm" [routerLink]="['/owner/barbers', b.id]">Schedule &amp; leave</a>
+              <button class="btn btn-outline btn-sm" (click)="toggleStatus(b)">
+                {{ b.isActive ? 'Deactivate' : 'Activate' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@if (modalOpen()) {
+  <div class="modal-backdrop" (click)="modalOpen.set(false)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 style="margin:0">{{ editingId() ? 'Edit barber' : 'Add barber' }}</h3>
+        <button class="btn btn-ghost btn-sm" (click)="modalOpen.set(false)">×</button>
+      </div>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input class="form-control" formControlName="name"
+              [class.is-invalid]="form.controls.name.touched && form.controls.name.invalid" />
+            @if (form.controls.name.touched && form.controls.name.invalid) {
+              <div class="field-error">Name is required.</div>
+            }
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input class="form-control" formControlName="phoneNumber" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Experience (years)</label>
+              <input type="number" class="form-control" formControlName="experienceYears" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Services this barber offers</label>
+            @if (services().length === 0) {
+              <p class="muted" style="font-size:0.85rem">Add services first to assign them.</p>
+            } @else {
+              <div class="service-checks">
+                @for (svc of services(); track svc.id) {
+                  <label class="check-item">
+                    <input type="checkbox" [checked]="isChecked(svc.id)"
+                      (change)="toggleService(svc.id, $any($event.target).checked)" />
+                    {{ svc.name }}
+                  </label>
+                }
+              </div>
+            }
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" (click)="modalOpen.set(false)">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            {{ saving() ? 'Saving...' : 'Save' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

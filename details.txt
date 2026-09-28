@@ -1,0 +1,2157 @@
+# Build a Full-Stack Salon Booking Application
+
+## 1. Project Goal
+
+Build a complete, professional full-stack web application for salon discovery and appointment booking.
+
+The application solves this real-world problem:
+
+Customers often visit salons without knowing whether the salon is currently busy. They may have to wait for a long time even though another nearby salon has available capacity.
+
+The application should allow customers to:
+
+* Discover salons.
+* View salon details.
+* See available services.
+* See available barbers.
+* See available appointment slots.
+* View availability for the entire upcoming week.
+* Select a service.
+* Select a date and time.
+* Book an appointment.
+* View booking details.
+* Cancel or reschedule an appointment.
+* View booking history.
+
+Salon owners should be able to:
+
+* Register their salon.
+* Manage salon information.
+* Set salon working hours.
+* Add and manage barbers.
+* Activate/deactivate barbers.
+* Configure barber schedules.
+* Add services.
+* Set service prices and duration.
+* View appointments.
+* Manage appointments.
+* View daily and weekly schedules.
+* View basic dashboard statistics.
+
+The core feature of this application is a **dynamic salon availability and booking system**.
+
+---
+
+# 2. STRICT TECHNOLOGY REQUIREMENT
+
+Use ONLY the following technologies.
+
+## Frontend
+
+Use:
+
+* Angular 19+
+* TypeScript
+* HTML5
+* CSS3
+* Angular Router
+* Angular Reactive Forms
+* RxJS
+* Angular HttpClient
+
+## Backend
+
+Use:
+
+* ASP.NET Core Web API
+* C#
+* Entity Framework Core
+* SQL Server
+* JWT Authentication
+
+## Do NOT use
+
+Do NOT introduce:
+
+* React
+* Node.js backend
+* Express.js
+* MongoDB
+* Redis
+* SignalR
+* Docker
+* Kubernetes
+* Microservices
+* Ocelot
+* Razor Pages
+* Blazor
+* Firebase
+* Supabase
+* GraphQL
+* Third-party backend services
+* Payment gateways
+* External authentication providers
+* Any additional infrastructure technology
+
+The goal is to build this application using only:
+
+```text
+Angular
++
+ASP.NET Core Web API
++
+Entity Framework Core
++
+SQL Server
+```
+
+Keep the architecture simple and maintainable.
+
+---
+
+# 3. CRITICAL DEPLOYMENT REQUIREMENT
+
+The Angular frontend MUST be independently deployable to Vercel.
+
+The frontend must NOT depend on the ASP.NET Core server for serving Angular files.
+
+The architecture must be:
+
+```text
+Angular Frontend
+       │
+       │ HTTP/JSON
+       ▼
+ASP.NET Core Web API
+       │
+       ▼
+Entity Framework Core
+       │
+       ▼
+SQL Server
+```
+
+The Angular application must be able to run independently.
+
+Create proper Angular environment configurations:
+
+```text
+environment.ts
+environment.development.ts
+environment.production.ts
+```
+
+The production environment must contain a configurable API URL:
+
+```typescript
+apiUrl: 'https://YOUR-BACKEND-URL/api'
+```
+
+Do NOT hardcode localhost URLs inside services.
+
+All API URLs must be configurable through the environment configuration.
+
+The frontend must be compatible with Vercel deployment.
+
+Configure Angular routing correctly so that refreshing a route such as:
+
+```text
+/customer/bookings
+/salons/1
+/owner/dashboard
+```
+
+does not result in a 404 on Vercel.
+
+Create any required Vercel configuration for Angular routing.
+
+---
+
+# 4. TWO APPLICATION ROLES
+
+There are two primary user roles.
+
+## CUSTOMER
+
+Customer can:
+
+* Register
+* Login
+* Logout
+* View profile
+* Search salons
+* View salons
+* View salon details
+* View services
+* View barbers
+* View weekly availability
+* Book appointments
+* View bookings
+* Cancel bookings
+* Reschedule bookings
+* View booking history
+
+## SALON OWNER
+
+Salon owner can:
+
+* Register
+* Login
+* Logout
+* Create salon
+* Update salon
+* Manage salon information
+* Configure working hours
+* Add barbers
+* Edit barbers
+* Activate/deactivate barbers
+* Configure barber schedules
+* Add services
+* Edit services
+* Activate/deactivate services
+* View appointments
+* Manage appointments
+* View daily schedule
+* View weekly schedule
+* View dashboard statistics
+
+---
+
+# 5. AUTHENTICATION
+
+Implement JWT-based authentication.
+
+The backend should provide:
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/refresh-token
+```
+
+Use password hashing.
+
+Never store plain-text passwords.
+
+Login response should contain:
+
+```json
+{
+  "accessToken": "...",
+  "refreshToken": "...",
+  "user": {
+    "id": 1,
+    "name": "John",
+    "email": "john@example.com",
+    "role": "CUSTOMER"
+  }
+}
+```
+
+Roles:
+
+```text
+CUSTOMER
+SALON_OWNER
+```
+
+Implement:
+
+### Angular
+
+```text
+AuthService
+AuthGuard
+RoleGuard
+AuthInterceptor
+```
+
+The interceptor should automatically add:
+
+```text
+Authorization: Bearer <token>
+```
+
+to authenticated HTTP requests.
+
+Protect routes according to user role.
+
+---
+
+# 6. DATABASE
+
+Use SQL Server with Entity Framework Core.
+
+Use EF Core migrations.
+
+Create a clean relational database.
+
+Main entities:
+
+```text
+User
+Salon
+Barber
+Service
+BarberService
+SalonBusinessHour
+BarberSchedule
+BarberLeave
+Appointment
+```
+
+Additional supporting entities can be introduced only when necessary.
+
+Do not overcomplicate the database.
+
+---
+
+# 7. USER ENTITY
+
+Create a User entity containing approximately:
+
+```text
+Id
+FirstName
+LastName
+Email
+PhoneNumber
+PasswordHash
+Role
+IsActive
+CreatedAt
+UpdatedAt
+```
+
+Email must be unique.
+
+---
+
+# 8. SALON ENTITY
+
+Create:
+
+```text
+Salon
+```
+
+Fields:
+
+```text
+Id
+OwnerId
+Name
+Description
+Address
+City
+State
+PostalCode
+PhoneNumber
+Latitude
+Longitude
+IsActive
+CreatedAt
+UpdatedAt
+```
+
+A salon belongs to one salon owner.
+
+A salon owner should manage only their own salon.
+
+---
+
+# 9. BARBER ENTITY
+
+Create:
+
+```text
+Barber
+```
+
+Fields:
+
+```text
+Id
+SalonId
+Name
+PhoneNumber
+ExperienceYears
+IsActive
+CreatedAt
+UpdatedAt
+```
+
+A salon can have multiple barbers.
+
+Example:
+
+```text
+Salon
+ ├── Barber A
+ ├── Barber B
+ ├── Barber C
+ └── Barber D
+```
+
+---
+
+# 10. BARBER ACTIVATION / DEACTIVATION
+
+This is an important feature.
+
+The salon owner must be able to deactivate a barber.
+
+Example:
+
+```text
+Barber A → ACTIVE
+Barber B → ACTIVE
+Barber C → INACTIVE
+Barber D → ACTIVE
+```
+
+If Barber C is unavailable today, the owner should also be able to mark the barber unavailable for a specific date.
+
+Do not delete the barber.
+
+Maintain their historical appointment data.
+
+Use:
+
+```text
+Barber.IsActive
+```
+
+and a schedule/leave mechanism for date-specific availability.
+
+---
+
+# 11. SERVICE ENTITY
+
+Create:
+
+```text
+Service
+```
+
+Fields:
+
+```text
+Id
+SalonId
+Name
+Description
+Price
+DurationInMinutes
+IsActive
+CreatedAt
+UpdatedAt
+```
+
+Example:
+
+```text
+Haircut
+₹250
+30 minutes
+```
+
+Other examples:
+
+```text
+Haircut + Beard
+Beard Trim
+Hair Spa
+Facial
+Shaving
+Hair Coloring
+```
+
+---
+
+# 12. BARBER-SERVICE RELATIONSHIP
+
+A barber can provide multiple services.
+
+A service can be provided by multiple barbers.
+
+Create:
+
+```text
+BarberService
+```
+
+Example:
+
+```text
+Barber A
+ ├── Haircut
+ ├── Beard Trim
+ └── Hair Spa
+
+Barber B
+ ├── Haircut
+ └── Beard Trim
+```
+
+When the customer selects a service, only barbers capable of performing that service should be considered for availability.
+
+---
+
+# 13. SALON BUSINESS HOURS
+
+Create a salon business hours model.
+
+Example:
+
+```text
+Monday     09:00 - 21:00
+Tuesday    09:00 - 21:00
+Wednesday  09:00 - 21:00
+Thursday   09:00 - 21:00
+Friday     09:00 - 21:00
+Saturday   09:00 - 22:00
+Sunday     10:00 - 18:00
+```
+
+Support:
+
+* Opening time
+* Closing time
+* Closed days
+
+---
+
+# 14. BARBER SCHEDULE
+
+Each barber can have an individual schedule.
+
+Example:
+
+```text
+Barber A
+
+Monday:
+09:00 - 18:00
+
+Tuesday:
+09:00 - 18:00
+
+Wednesday:
+OFF
+```
+
+Create a suitable:
+
+```text
+BarberSchedule
+```
+
+entity.
+
+Also support date-specific leave/unavailability.
+
+Example:
+
+```text
+October 5
+Barber A → OFF
+```
+
+---
+
+# 15. APPOINTMENT ENTITY
+
+Create:
+
+```text
+Appointment
+```
+
+Fields:
+
+```text
+Id
+CustomerId
+SalonId
+BarberId
+ServiceId
+AppointmentDate
+StartTime
+EndTime
+Status
+Amount
+CreatedAt
+UpdatedAt
+CancellationReason
+```
+
+Statuses:
+
+```text
+PENDING
+CONFIRMED
+COMPLETED
+CANCELLED
+NO_SHOW
+```
+
+---
+
+# 16. CORE FEATURE — DYNAMIC SLOT AVAILABILITY
+
+This is the most important business logic.
+
+Do NOT simply hardcode appointment slots.
+
+Availability must be calculated using:
+
+```text
+Salon working hours
++
+Barber working schedule
++
+Barber active status
++
+Barber leave/unavailability
++
+Barber service capability
++
+Existing appointments
++
+Service duration
+```
+
+Example:
+
+Salon:
+
+```text
+09:00 AM - 09:00 PM
+```
+
+Service:
+
+```text
+Haircut
+30 minutes
+```
+
+Barbers:
+
+```text
+Barber A → Active
+Barber B → Active
+Barber C → Active
+```
+
+At 5:00 PM:
+
+```text
+Barber A → Available
+Barber B → Booked
+Barber C → Available
+```
+
+Therefore:
+
+```text
+5:00 PM → 2 available barbers
+```
+
+If another customer books Barber A:
+
+```text
+Barber A → Booked
+Barber B → Booked
+Barber C → Available
+```
+
+Then:
+
+```text
+5:00 PM → 1 available barber
+```
+
+If all three are occupied:
+
+```text
+5:00 PM → Fully Booked
+```
+
+---
+
+# 17. WEEKLY AVAILABILITY
+
+Customers must be able to view availability for the upcoming week.
+
+Example:
+
+```text
+Monday
+Tuesday
+Wednesday
+Thursday
+Friday
+Saturday
+Sunday
+```
+
+Selecting a day should show available slots.
+
+Example:
+
+```text
+Saturday
+
+09:00 AM  Available
+09:30 AM  Available
+10:00 AM  Fully Booked
+10:30 AM  Available
+11:00 AM  Available
+11:30 AM  Available
+```
+
+Create an API such as:
+
+```text
+GET /api/salons/{salonId}/availability
+```
+
+Parameters:
+
+```text
+serviceId
+startDate
+endDate
+```
+
+Example:
+
+```text
+/api/salons/1/availability?serviceId=2&startDate=2026-10-01&endDate=2026-10-07
+```
+
+---
+
+# 18. SLOT DURATION
+
+Slot calculation must respect service duration.
+
+Example:
+
+```text
+Haircut = 30 minutes
+Hair Spa = 60 minutes
+```
+
+If a customer selects Hair Spa, a 30-minute appointment must not be considered sufficient.
+
+The availability engine must calculate overlapping appointments correctly.
+
+---
+
+# 19. PREVENT DOUBLE BOOKING
+
+This is critical.
+
+Two customers must never successfully book the same barber for overlapping time periods.
+
+The backend must always re-check availability immediately before creating an appointment.
+
+Do NOT trust frontend availability.
+
+Booking flow:
+
+```text
+Customer selects slot
+        ↓
+Frontend sends booking request
+        ↓
+Backend validates request
+        ↓
+Backend checks availability again
+        ↓
+Backend identifies available barber
+        ↓
+Backend creates appointment
+        ↓
+Return confirmation
+```
+
+If the slot is no longer available:
+
+Return:
+
+```text
+409 Conflict
+```
+
+with a message such as:
+
+```text
+"The selected time slot is no longer available."
+```
+
+Use database transactions where appropriate.
+
+---
+
+# 20. BOOKING FLOW
+
+Customer journey:
+
+```text
+Login
+ ↓
+Search Salon
+ ↓
+Select Salon
+ ↓
+Select Service
+ ↓
+Select Date
+ ↓
+View Available Slots
+ ↓
+Select Time
+ ↓
+Confirm Booking
+ ↓
+Booking Created
+ ↓
+Booking Confirmation
+```
+
+Booking confirmation should display:
+
+```text
+Salon Name
+Service
+Barber
+Date
+Time
+Price
+Booking ID
+Status
+```
+
+---
+
+# 21. CANCELLATION
+
+Customer should be able to cancel upcoming appointments.
+
+Backend must verify:
+
+* Appointment belongs to customer.
+* Appointment is still cancellable.
+* Appointment isn't already completed/cancelled.
+* Appointment date/time rules are respected.
+
+Do not rely only on frontend validation.
+
+---
+
+# 22. RESCHEDULING
+
+Customer should be able to reschedule an eligible appointment.
+
+Flow:
+
+```text
+Existing Appointment
+        ↓
+Select Reschedule
+        ↓
+Select New Date
+        ↓
+View Availability
+        ↓
+Select New Slot
+        ↓
+Backend validates
+        ↓
+Update Appointment
+```
+
+---
+
+# 23. CUSTOMER UI
+
+Create the following pages:
+
+```text
+Landing Page
+Login
+Register
+Customer Home
+Salon Search
+Nearby/All Salons
+Salon Details
+Service Selection
+Weekly Availability
+Booking Confirmation
+My Bookings
+Booking Details
+Booking History
+Profile
+```
+
+---
+
+# 24. SALON OWNER UI
+
+Create:
+
+```text
+Owner Login
+Owner Registration
+Owner Dashboard
+Salon Profile
+Business Hours
+Services
+Barbers
+Barber Schedule
+Appointments
+Calendar/Schedule
+Profile
+```
+
+---
+
+# 25. CUSTOMER HOME PAGE
+
+Create a professional home page.
+
+Include:
+
+```text
+Search salons
+Search by salon name
+Search by city/area
+```
+
+Display salon cards:
+
+```text
+Salon Name
+Rating
+Address
+Services
+Starting Price
+Next Available Slot
+```
+
+Example:
+
+```text
+Style Studio
+
+⭐ 4.6
+
+Haircut from ₹250
+
+Next available:
+Today 5:30 PM
+
+[View Salon]
+```
+
+---
+
+# 26. SALON DETAILS PAGE
+
+Display:
+
+```text
+Salon name
+Description
+Address
+Working hours
+Services
+Prices
+Duration
+Barbers
+Availability
+```
+
+Provide:
+
+```text
+[Book Appointment]
+```
+
+---
+
+# 27. OWNER DASHBOARD
+
+Display:
+
+```text
+Today's Appointments
+Upcoming Appointments
+Active Barbers
+Total Services
+Completed Appointments
+Cancelled Appointments
+```
+
+Example:
+
+```text
+Today's Overview
+
+Appointments: 18
+
+Completed: 10
+Upcoming: 6
+Cancelled: 2
+
+Active Barbers: 4
+```
+
+Do not introduce charts unless they are useful.
+
+Keep the dashboard clean.
+
+---
+
+# 28. BARBER MANAGEMENT UI
+
+Owner should be able to:
+
+```text
+Add Barber
+Edit Barber
+Activate Barber
+Deactivate Barber
+Manage Services
+Manage Schedule
+Mark Leave
+```
+
+Example:
+
+```text
+Rahul
+ACTIVE
+Haircut, Beard
+
+[Manage]
+
+Arjun
+OFF TODAY
+Haircut
+
+[Manage]
+```
+
+---
+
+# 29. SERVICE MANAGEMENT UI
+
+Owner can:
+
+```text
+Add Service
+Edit Service
+Deactivate Service
+Activate Service
+Set Price
+Set Duration
+```
+
+---
+
+# 30. APPOINTMENT MANAGEMENT
+
+Owner can view:
+
+```text
+Today's appointments
+Upcoming appointments
+Completed appointments
+Cancelled appointments
+```
+
+Each appointment should display:
+
+```text
+Customer
+Service
+Barber
+Date
+Time
+Status
+Amount
+```
+
+Owner must only see appointments belonging to their own salon.
+
+---
+
+# 31. RESPONSIVE UI
+
+The application must work properly on:
+
+```text
+Desktop
+Tablet
+Mobile
+```
+
+Use responsive CSS.
+
+Do not build a desktop-only application.
+
+The customer experience should be especially good on mobile.
+
+---
+
+# 32. ANGULAR ARCHITECTURE
+
+Use a clean Angular architecture.
+
+Recommended structure:
+
+```text
+src/app/
+
+├── core/
+│   ├── guards/
+│   ├── interceptors/
+│   ├── services/
+│   └── models/
+│
+├── shared/
+│   ├── components/
+│   ├── pipes/
+│   └── directives/
+│
+├── features/
+│   ├── auth/
+│   ├── customer/
+│   ├── salon-owner/
+│   ├── salons/
+│   └── bookings/
+│
+├── layout/
+│   ├── navbar/
+│   ├── sidebar/
+│   └── footer/
+│
+└── app.routes.ts
+```
+
+Use standalone Angular components where appropriate.
+
+Use lazy loading for major feature areas.
+
+---
+
+# 33. FRONTEND API SERVICES
+
+Do not place HTTP calls directly inside UI components.
+
+Create services such as:
+
+```text
+AuthService
+SalonService
+BarberService
+ServiceService
+AvailabilityService
+AppointmentService
+OwnerService
+```
+
+Components should call services.
+
+Services should call APIs.
+
+Example:
+
+```text
+Component
+    ↓
+AvailabilityService
+    ↓
+HttpClient
+    ↓
+ASP.NET Core API
+```
+
+---
+
+# 34. FRONTEND DEMO MODE
+
+The application must be designed so the Angular frontend can be demonstrated publicly even when the backend is not hosted.
+
+Implement a clean separation between:
+
+```text
+API mode
+Demo mode
+```
+
+For example:
+
+```text
+environment.ts
+environment.development.ts
+environment.production.ts
+environment.demo.ts
+```
+
+The demo build can use local mock JSON/data services.
+
+The production/full-stack build should use the ASP.NET Core API.
+
+Do NOT mix mock data throughout components.
+
+Create a clean service abstraction.
+
+For example:
+
+```text
+SalonDataService
+      ↓
+DemoSalonDataService
+      OR
+ApiSalonDataService
+```
+
+The UI should not need to know which implementation it is using.
+
+---
+
+# 35. VERCEL DEMO REQUIREMENT
+
+The demo version must be deployable to Vercel.
+
+The Vercel demo should contain a complete interactive frontend experience.
+
+The demo should allow a visitor to:
+
+```text
+Open application
+ ↓
+View salons
+ ↓
+Open salon
+ ↓
+View services
+ ↓
+Select service
+ ↓
+View weekly availability
+ ↓
+Select slot
+ ↓
+Book appointment
+ ↓
+View booking confirmation
+```
+
+Also provide an owner demo:
+
+```text
+Owner Login
+ ↓
+Owner Dashboard
+ ↓
+View Barbers
+ ↓
+Activate/Deactivate Barber
+ ↓
+View Services
+ ↓
+View Appointments
+```
+
+For demo mode, use mock/local data.
+
+The demo must not expose fake API calls that fail because a backend isn't available.
+
+---
+
+# 36. DEMO DATA
+
+Provide realistic demo data.
+
+Create several salons.
+
+Example:
+
+```text
+Style Studio
+Urban Cuts
+The Grooming Lounge
+Classic Hair Studio
+Gentleman's Hub
+```
+
+Each salon should have:
+
+* Multiple barbers
+* Multiple services
+* Different prices
+* Different schedules
+* Different availability
+
+Create enough data so the application feels realistic.
+
+---
+
+# 37. DEMO CUSTOMER ACCOUNT
+
+Create a frontend demo login:
+
+```text
+Customer Demo
+```
+
+Credentials can be displayed on the demo login page.
+
+Example:
+
+```text
+Email:
+customer@demo.com
+
+Password:
+Demo@123
+```
+
+For demo mode this can be handled locally.
+
+For full-stack mode, the credentials should use the real backend authentication.
+
+---
+
+# 38. DEMO OWNER ACCOUNT
+
+Create:
+
+```text
+Salon Owner Demo
+```
+
+Example:
+
+```text
+Email:
+owner@demo.com
+
+Password:
+Demo@123
+```
+
+The owner demo should allow the visitor to explore:
+
+```text
+Dashboard
+Barbers
+Services
+Appointments
+Schedules
+```
+
+---
+
+# 39. BACKEND ARCHITECTURE
+
+Use:
+
+```text
+ASP.NET Core Web API
+```
+
+Structure:
+
+```text
+Backend/
+│
+├── Controllers/
+├── Services/
+├── Interfaces/
+├── Repositories/
+├── Entities/
+├── DTOs/
+├── Data/
+├── Middleware/
+├── Migrations/
+└── Program.cs
+```
+
+Use:
+
+* Dependency Injection
+* SOLID principles
+* Repository Pattern where appropriate
+* Service Layer
+* DTOs
+* Entity Framework Core
+
+Keep controllers thin.
+
+Do not put business logic directly into controllers.
+
+---
+
+# 40. BACKEND API
+
+Create APIs for:
+
+### Authentication
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/refresh-token
+```
+
+### Salons
+
+```text
+GET /api/salons
+GET /api/salons/{id}
+POST /api/salons
+PUT /api/salons/{id}
+```
+
+### Services
+
+```text
+GET /api/salons/{salonId}/services
+POST /api/services
+PUT /api/services/{id}
+DELETE /api/services/{id}
+```
+
+### Barbers
+
+```text
+GET /api/salons/{salonId}/barbers
+POST /api/barbers
+PUT /api/barbers/{id}
+PATCH /api/barbers/{id}/status
+```
+
+### Availability
+
+```text
+GET /api/salons/{salonId}/availability
+```
+
+### Appointments
+
+```text
+GET /api/appointments
+GET /api/appointments/{id}
+POST /api/appointments
+PUT /api/appointments/{id}/reschedule
+PATCH /api/appointments/{id}/cancel
+```
+
+---
+
+# 41. AUTHORIZATION
+
+Implement backend role-based authorization.
+
+Customer endpoints must require:
+
+```text
+CUSTOMER
+```
+
+Owner endpoints must require:
+
+```text
+SALON_OWNER
+```
+
+Additionally, implement resource ownership checks.
+
+For example:
+
+Owner A cannot modify Owner B's salon.
+
+Customer A cannot modify Customer B's booking.
+
+These checks MUST happen on the backend.
+
+---
+
+# 42. GLOBAL ERROR HANDLING
+
+Create global exception handling middleware.
+
+Return consistent responses:
+
+```json
+{
+  "success": false,
+  "message": "The selected time slot is no longer available.",
+  "statusCode": 409
+}
+```
+
+Use appropriate status codes:
+
+```text
+200
+201
+400
+401
+403
+404
+409
+500
+```
+
+---
+
+# 43. VALIDATION
+
+Validate all important data.
+
+Frontend:
+
+```text
+Reactive Forms
+```
+
+Backend:
+
+Validate:
+
+```text
+Email
+Password
+Phone
+Salon
+Service
+Price
+Duration
+Appointment date
+Appointment time
+```
+
+Never rely only on frontend validation.
+
+---
+
+# 44. SEED DATA
+
+Create EF Core seed data for the full-stack backend.
+
+Include:
+
+```text
+Demo Customer
+Demo Salon Owner
+Several Salons
+Several Barbers
+Several Services
+Barber-Service relationships
+Business hours
+Barber schedules
+Sample appointments
+```
+
+The backend should be usable immediately after database setup.
+
+---
+
+# 45. DATABASE MIGRATIONS
+
+Create:
+
+```text
+Initial migration
+```
+
+Document how to execute:
+
+```text
+dotnet ef database update
+```
+
+The README must contain complete setup instructions.
+
+---
+
+# 46. SWAGGER
+
+Enable Swagger/OpenAPI in the ASP.NET Core backend.
+
+Swagger should document all APIs.
+
+Include JWT authentication configuration in Swagger so protected APIs can be tested.
+
+---
+
+# 47. CONFIGURATION
+
+Do not hardcode:
+
+```text
+Database connection string
+JWT secret
+Production API URL
+```
+
+Use configuration files/environment variables.
+
+Example:
+
+```text
+appsettings.json
+appsettings.Development.json
+```
+
+Frontend:
+
+```text
+environment.ts
+environment.development.ts
+environment.production.ts
+```
+
+Do not commit secrets.
+
+---
+
+# 48. CORS
+
+Configure ASP.NET Core CORS properly.
+
+Development should allow the Angular development server.
+
+Production should allow the Vercel frontend domain.
+
+Example concept:
+
+```text
+http://localhost:4200
+```
+
+and later:
+
+```text
+https://your-project.vercel.app
+```
+
+Do not use unrestricted CORS in the final configuration unless absolutely necessary.
+
+---
+
+# 49. ERROR AND LOADING STATES
+
+Frontend must properly handle:
+
+```text
+Loading
+Success
+Empty
+Error
+Unauthorized
+Forbidden
+Conflict
+```
+
+For example, when another user books a slot:
+
+```text
+"The selected slot was just booked by another customer. Please choose another time."
+```
+
+Do not silently fail.
+
+---
+
+# 50. UI QUALITY
+
+The application should look like a real startup product.
+
+Avoid:
+
+* Basic default HTML forms
+* Unstyled tables
+* Excessive gradients
+* Overly complicated animations
+* Generic placeholder UI
+* Broken mobile layouts
+
+Create:
+
+* Professional navigation
+* Cards
+* Tables
+* Forms
+* Modals
+* Status badges
+* Calendar/slot UI
+* Empty states
+* Loading states
+* Error states
+* Responsive layouts
+
+Use a consistent visual design throughout the application.
+
+---
+
+# 51. PROJECT STRUCTURE
+
+Create the GitHub repository with:
+
+```text
+SalonBooking/
+│
+├── frontend/
+│   └── Angular application
+│
+├── backend/
+│   └── ASP.NET Core application
+│
+├── database/
+│   └── database documentation/scripts if required
+│
+├── docs/
+│   └── architecture documentation
+│
+├── README.md
+└── .gitignore
+```
+
+The repository must contain the complete full-stack source code.
+
+---
+
+# 52. README
+
+Create a professional GitHub README containing:
+
+```text
+Project Overview
+Problem Statement
+Features
+Technology Stack
+Architecture
+Database Design
+API Documentation
+Frontend Setup
+Backend Setup
+Database Setup
+Environment Variables
+Demo Accounts
+Running the Application
+Vercel Deployment
+Backend Deployment
+Future Improvements
+```
+
+Include a section:
+
+```text
+Live Demo
+```
+
+where the Vercel URL can be added later.
+
+---
+
+# 53. VERCEL DEPLOYMENT
+
+Prepare the frontend specifically for Vercel.
+
+The final Angular application must support:
+
+```text
+npm install
+npm run build
+```
+
+or the appropriate Angular production build command.
+
+Ensure the correct output directory is documented.
+
+Configure SPA routing so direct URLs work.
+
+For example:
+
+```text
+https://your-app.vercel.app/
+https://your-app.vercel.app/salons
+https://your-app.vercel.app/customer/bookings
+https://your-app.vercel.app/owner/dashboard
+```
+
+Refreshing any valid frontend route must not produce an unwanted 404.
+
+---
+
+# 54. FULL-STACK VS DEMO CONFIGURATION
+
+The project should support two modes.
+
+## Full-Stack Mode
+
+```text
+Angular
+   ↓
+ASP.NET Core API
+   ↓
+SQL Server
+```
+
+All data comes from the backend.
+
+## Demo Mode
+
+```text
+Angular
+   ↓
+Local/mock data
+```
+
+The demo should work without the backend.
+
+Use a clear configuration switch.
+
+Do not duplicate UI code between the two modes.
+
+---
+
+# 55. IMPORTANT: DO NOT FAKE BACKEND FUNCTIONALITY IN FULL-STACK MODE
+
+When using full-stack mode:
+
+* Login must call the API.
+* Salon data must come from the API.
+* Availability must come from the API.
+* Booking must be created through the API.
+* Cancellation must call the API.
+* Owner management must call the API.
+
+Do not simulate successful API responses.
+
+---
+
+# 56. IMPORTANT: DO NOT MAKE THE VERCEL DEMO DEPEND ON BACKEND AVAILABILITY
+
+The Vercel demo must work independently.
+
+If the backend is not hosted, the demo must still work using demo data.
+
+This allows the frontend to remain publicly accessible even when the backend is running locally during development.
+
+---
+
+# 57. DEVELOPMENT PHASES
+
+Build the project in phases.
+
+## Phase 1
+
+Create:
+
+```text
+Angular project
+ASP.NET Core project
+SQL Server configuration
+EF Core
+Swagger
+Git structure
+```
+
+Make sure both projects compile.
+
+## Phase 2
+
+Implement:
+
+```text
+Authentication
+JWT
+Roles
+Angular Guards
+Interceptor
+```
+
+## Phase 3
+
+Implement:
+
+```text
+Salon Management
+Salon Owner
+Business Hours
+```
+
+## Phase 4
+
+Implement:
+
+```text
+Barber Management
+Barber Schedule
+Barber Services
+Barber Leave
+```
+
+## Phase 5
+
+Implement:
+
+```text
+Service Management
+```
+
+## Phase 6
+
+Implement:
+
+```text
+Dynamic Availability Engine
+Weekly Slots
+```
+
+## Phase 7
+
+Implement:
+
+```text
+Appointment Booking
+Double Booking Protection
+Cancellation
+Rescheduling
+```
+
+## Phase 8
+
+Implement:
+
+```text
+Customer Dashboard
+Salon Search
+Salon Details
+Bookings
+```
+
+## Phase 9
+
+Implement:
+
+```text
+Salon Owner Dashboard
+Appointments
+Barbers
+Services
+Schedules
+```
+
+## Phase 10
+
+Implement:
+
+```text
+Demo Mode
+Mock Data
+Vercel Compatibility
+```
+
+## Phase 11
+
+Test the entire application.
+
+## Phase 12
+
+Prepare GitHub README and deployment documentation.
+
+---
+
+# 58. TESTING
+
+At minimum, test the following backend scenarios:
+
+```text
+Customer registration
+Customer login
+Owner registration
+Owner login
+Salon creation
+Barber creation
+Barber deactivation
+Barber activation
+Service creation
+Availability calculation
+Booking
+Cancellation
+Rescheduling
+Unauthorized access
+Invalid ownership access
+Double booking
+Overlapping appointment
+Inactive barber
+Barber leave
+Closed salon
+```
+
+The double-booking scenario is especially important.
+
+Test:
+
+```text
+Customer A → books 5:00 PM
+Customer B → simultaneously tries 5:00 PM
+```
+
+Only one request should succeed if there is only one available barber.
+
+---
+
+# 59. FINAL USER EXPERIENCE
+
+The customer experience should be:
+
+```text
+Open Application
+      ↓
+Find Salon
+      ↓
+Select Salon
+      ↓
+View Services
+      ↓
+Select Haircut
+      ↓
+Select Date
+      ↓
+View Weekly Slots
+      ↓
+Select Available Time
+      ↓
+Confirm Booking
+      ↓
+Booking Confirmation
+```
+
+The owner experience:
+
+```text
+Login
+ ↓
+Dashboard
+ ↓
+Manage Salon
+ ↓
+Manage Barbers
+ ↓
+Manage Services
+ ↓
+Configure Schedule
+ ↓
+View Appointments
+```
+
+---
+
+# 60. FINAL DEFINITION OF DONE
+
+The application is complete only when:
+
+### Frontend
+
+* Angular application works.
+* Customer UI works.
+* Owner UI works.
+* Authentication UI works.
+* Salon search works.
+* Salon details work.
+* Weekly availability UI works.
+* Booking UI works.
+* Booking history works.
+* Owner dashboard works.
+* Barber management works.
+* Service management works.
+* Responsive design works.
+* Demo mode works.
+* Vercel deployment is supported.
+
+### Backend
+
+* ASP.NET Core API works.
+* JWT authentication works.
+* Role authorization works.
+* Salon APIs work.
+* Barber APIs work.
+* Service APIs work.
+* Availability engine works.
+* Appointment APIs work.
+* Cancellation works.
+* Rescheduling works.
+* Double-booking prevention works.
+* Ownership authorization works.
+* EF Core migrations work.
+* SQL Server integration works.
+* Swagger works.
+* Global error handling works.
+
+### Deployment
+
+The Angular frontend must be deployable independently to Vercel.
+
+The backend must be independently deployable later.
+
+The frontend must not require the backend to be online for the Vercel demo mode.
+
+---
+
+# 61. FINAL DELIVERABLES
+
+At completion, provide:
+
+```text
+1. Complete Angular frontend
+2. Complete ASP.NET Core Web API
+3. Entity Framework Core implementation
+4. SQL Server database model
+5. EF Core migrations
+6. JWT authentication
+7. Role-based authorization
+8. Salon management
+9. Barber management
+10. Service management
+11. Dynamic weekly availability
+12. Double-booking prevention
+13. Appointment management
+14. Customer dashboard
+15. Salon owner dashboard
+16. Demo/mock mode
+17. Vercel-compatible frontend
+18. Seed/demo data
+19. Swagger documentation
+20. GitHub-ready repository
+21. Professional README
+22. Deployment instructions
+```
+
+Before finishing, verify that the Angular application can be built and deployed independently to Vercel.
+
+The final project should look and behave like a professional real-world salon appointment application, while keeping the technology stack strictly limited to:
+
+```text
+Angular
++
+ASP.NET Core Web API
++
+Entity Framework Core
++
+SQL Server
+```
+
+Do not introduce additional technologies unless absolutely required by Angular or ASP.NET Core itself.

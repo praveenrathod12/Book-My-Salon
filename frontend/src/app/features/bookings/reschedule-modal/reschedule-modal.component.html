@@ -1,0 +1,62 @@
+<div class="modal-backdrop" (click)="closed.emit()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 style="margin:0">Reschedule appointment</h3>
+      <button class="btn btn-ghost btn-sm" (click)="closed.emit()">×</button>
+    </div>
+    <div class="modal-body">
+      <p class="muted" style="margin-top:0">
+        {{ appointment.serviceName }} at {{ appointment.salonName }}
+      </p>
+
+      @if (loading()) {
+        <app-spinner label="Loading times..." />
+      } @else if (error()) {
+        <div class="alert alert-danger">{{ error() }}</div>
+      } @else {
+        <div class="day-tabs">
+          @for (day of days(); track day.date; let i = $index) {
+            <button
+              type="button"
+              class="day-tab"
+              [class.day-tab-active]="selectedDayIndex() === i"
+              (click)="selectDay(i)"
+            >
+              <strong>{{ dayShort(day.dayName) }}</strong>
+              <small>{{ dayDate(day.date) }}</small>
+            </button>
+          }
+        </div>
+
+        @if (selectedDay; as day) {
+          @if (day.isClosed) {
+            <div class="alert alert-info mt">Closed on this day.</div>
+          } @else if (day.slots.length === 0) {
+            <div class="alert alert-info mt">No slots this day.</div>
+          } @else {
+            <div class="slot-grid mt">
+              @for (slot of day.slots; track slot.time) {
+                <button
+                  type="button"
+                  class="slot"
+                  [class.slot-selected]="selectedSlot()?.time === slot.time"
+                  [class.slot-disabled]="!slot.available"
+                  [disabled]="!slot.available"
+                  (click)="selectSlot(slot)"
+                >
+                  {{ slot.time | prettyTime }}
+                </button>
+              }
+            </div>
+          }
+        }
+      }
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="closed.emit()">Cancel</button>
+      <button class="btn btn-primary" (click)="save()" [disabled]="!selectedSlot() || saving()">
+        {{ saving() ? 'Saving...' : 'Confirm new time' }}
+      </button>
+    </div>
+  </div>
+</div>

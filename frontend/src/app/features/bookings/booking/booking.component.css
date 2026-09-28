@@ -1,0 +1,50 @@
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.step-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.15rem;
+  margin-bottom: 1rem;
+}
+.step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+.service-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+.service-option {
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.service-option:hover {
+  border-color: var(--primary);
+}
+.service-option.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+.confirm-card {
+  background: linear-gradient(120deg, #faf5ff, #eff6ff);
+  position: sticky;
+  bottom: 1rem;
+}

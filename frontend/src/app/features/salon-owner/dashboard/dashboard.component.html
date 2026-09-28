@@ -1,0 +1,65 @@
+<div class="container page">
+  @if (loading()) {
+    <app-spinner label="Loading dashboard..." />
+  } @else if (!hasSalon()) {
+    <app-empty-state icon="💈" title="Set up your salon" message="Create your salon profile to start managing barbers, services and appointments." />
+    <div class="text-center">
+      <a class="btn btn-primary" routerLink="/owner/salon">Create salon profile</a>
+    </div>
+  } @else {
+    <div class="flex-between flex-wrap mb">
+      <div>
+        <h1 style="margin:0">Welcome back{{ userName ? ', ' + userName : '' }}</h1>
+        <p class="muted" style="margin:0.25rem 0 0">{{ salon()?.name }} · {{ salon()?.city }}</p>
+      </div>
+      <div class="flex gap-sm flex-wrap">
+        <a class="btn btn-outline btn-sm" routerLink="/owner/salon">Salon profile</a>
+        <a class="btn btn-outline btn-sm" routerLink="/owner/business-hours">Business hours</a>
+      </div>
+    </div>
+
+    @if (stats(); as s) {
+      <div class="stats-grid mb">
+        <div class="stat-card card"><div class="card-body"><span class="stat-num">{{ s.todayAppointments }}</span><span class="stat-label">Today's appointments</span></div></div>
+        <div class="stat-card card"><div class="card-body"><span class="stat-num">{{ s.upcomingAppointments }}</span><span class="stat-label">Upcoming</span></div></div>
+        <div class="stat-card card"><div class="card-body"><span class="stat-num accent-green">{{ s.completedAppointments }}</span><span class="stat-label">Completed</span></div></div>
+        <div class="stat-card card"><div class="card-body"><span class="stat-num accent-red">{{ s.cancelledAppointments }}</span><span class="stat-label">Cancelled</span></div></div>
+        <div class="stat-card card"><div class="card-body"><span class="stat-num">{{ s.activeBarbers }}</span><span class="stat-label">Active barbers</span></div></div>
+        <div class="stat-card card"><div class="card-body"><span class="stat-num">{{ s.totalServices }}</span><span class="stat-label">Services</span></div></div>
+      </div>
+    }
+
+    <div class="card">
+      <div class="card-body">
+        <div class="flex-between mb">
+          <h2 style="margin:0">Today's schedule</h2>
+          <a class="btn btn-outline btn-sm" routerLink="/owner/appointments">All appointments</a>
+        </div>
+
+        @if (todayAppointments().length === 0) {
+          <app-empty-state icon="🗓️" title="No appointments today" message="Enjoy the quiet, or check upcoming bookings." />
+        } @else {
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr><th>Time</th><th>Customer</th><th>Service</th><th>Barber</th><th>Status</th><th>Amount</th></tr>
+              </thead>
+              <tbody>
+                @for (a of todayAppointments(); track a.id) {
+                  <tr>
+                    <td>{{ a.startTime | prettyTime }}</td>
+                    <td>{{ a.customerName }}</td>
+                    <td>{{ a.serviceName }}</td>
+                    <td>{{ a.barberName }}</td>
+                    <td><app-status-badge [status]="a.status" /></td>
+                    <td>{{ a.amount | inr }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

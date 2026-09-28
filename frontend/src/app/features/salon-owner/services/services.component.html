@@ -1,0 +1,99 @@
+<div class="container page">
+  <div class="flex-between mb flex-wrap">
+    <div>
+      <h1 style="margin:0">Services</h1>
+      <p class="muted" style="margin:0.25rem 0 0">Manage what your salon offers, with prices and durations.</p>
+    </div>
+    @if (hasSalon()) {
+      <button class="btn btn-primary" (click)="openCreate()">+ Add service</button>
+    }
+  </div>
+
+  @if (loading()) {
+    <app-spinner label="Loading services..." />
+  } @else if (!hasSalon()) {
+    <app-empty-state icon="💈" title="No salon yet" message="Create your salon profile first." />
+    <div class="text-center"><a class="btn btn-primary" routerLink="/owner/salon">Create salon</a></div>
+  } @else if (services().length === 0) {
+    <app-empty-state icon="✂️" title="No services yet" message="Add your first service to start taking bookings." />
+  } @else {
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>Service</th><th>Duration</th><th>Price</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (svc of services(); track svc.id) {
+            <tr>
+              <td>
+                <strong>{{ svc.name }}</strong>
+                @if (svc.description) { <div class="muted" style="font-size:0.82rem">{{ svc.description }}</div> }
+              </td>
+              <td>{{ svc.durationInMinutes }} min</td>
+              <td>{{ svc.price | inr }}</td>
+              <td>
+                <span class="badge" [class.badge-success]="svc.isActive" [class.badge-muted]="!svc.isActive">
+                  {{ svc.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>
+                <div class="flex gap-sm">
+                  <button class="btn btn-outline btn-sm" (click)="openEdit(svc)">Edit</button>
+                  <button class="btn btn-outline btn-sm" (click)="toggleStatus(svc)">
+                    {{ svc.isActive ? 'Deactivate' : 'Activate' }}
+                  </button>
+                  <button class="btn btn-danger btn-sm" (click)="remove(svc)">Delete</button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (modalOpen()) {
+  <div class="modal-backdrop" (click)="modalOpen.set(false)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 style="margin:0">{{ editingId() ? 'Edit service' : 'Add service' }}</h3>
+        <button class="btn btn-ghost btn-sm" (click)="modalOpen.set(false)">×</button>
+      </div>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input class="form-control" formControlName="name"
+              [class.is-invalid]="form.controls.name.touched && form.controls.name.invalid" />
+            @if (form.controls.name.touched && form.controls.name.invalid) {
+              <div class="field-error">Name is required.</div>
+            }
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" rows="2" formControlName="description"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Price (₹)</label>
+              <input type="number" class="form-control" formControlName="price"
+                [class.is-invalid]="form.controls.price.touched && form.controls.price.invalid" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Duration (minutes)</label>
+              <input type="number" step="5" class="form-control" formControlName="durationInMinutes"
+                [class.is-invalid]="form.controls.durationInMinutes.touched && form.controls.durationInMinutes.invalid" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" (click)="modalOpen.set(false)">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            {{ saving() ? 'Saving...' : 'Save' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

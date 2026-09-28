@@ -1,0 +1,38 @@
+<div class="container page confirm-page">
+  @if (loading()) {
+    <app-spinner label="Loading confirmation..." />
+  } @else if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  } @else if (appt()) {
+    @if (appt(); as a) {
+    <div class="success-header">
+      <div class="check">✓</div>
+      <h1>Booking confirmed</h1>
+      <p class="muted">Your appointment has been booked. A summary is below.</p>
+    </div>
+
+    <div class="card ticket">
+      <div class="card-body">
+        <div class="flex-between">
+          <h2 style="margin:0">{{ a.salonName }}</h2>
+          <app-status-badge [status]="a.status" />
+        </div>
+
+        <div class="ticket-grid">
+          <div><span class="label">Booking ID</span><strong>#{{ a.id }}</strong></div>
+          <div><span class="label">Service</span><strong>{{ a.serviceName }}</strong></div>
+          <div><span class="label">Barber</span><strong>{{ a.barberName }}</strong></div>
+          <div><span class="label">Date</span><strong>{{ a.appointmentDate | prettyDate }}</strong></div>
+          <div><span class="label">Time</span><strong>{{ a.startTime | prettyTime }} – {{ a.endTime | prettyTime }}</strong></div>
+          <div><span class="label">Price</span><strong>{{ a.amount | inr }}</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-sm mt confirm-actions">
+      <a class="btn btn-primary" routerLink="/customer/bookings">View my bookings</a>
+      <a class="btn btn-outline" routerLink="/salons">Book another</a>
+    </div>
+    }
+  }
+</div>

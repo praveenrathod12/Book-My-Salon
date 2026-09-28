@@ -1,0 +1,7 @@
+{
+  "buildCommand": "npm run build:demo",
+  "outputDirectory": "dist/frontend/browser",
+  "installCommand": "npm install",
+  "framework": null,
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}

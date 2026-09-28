@@ -1,0 +1,82 @@
+<div class="auth-page container" style="grid-template-columns: 1fr; max-width: 560px;">
+  <div class="auth-card card">
+    <div class="card-body">
+      <h2>Create your account</h2>
+      <p class="muted mb">Join as a customer to book, or as an owner to manage your salon.</p>
+
+      @if (errorMsg()) {
+        <div class="alert alert-danger">{{ errorMsg() }}</div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="firstName">First name</label>
+            <input id="firstName" class="form-control" formControlName="firstName"
+              [class.is-invalid]="form.controls.firstName.touched && form.controls.firstName.invalid" />
+            @if (form.controls.firstName.touched && form.controls.firstName.invalid) {
+              <div class="field-error">First name is required.</div>
+            }
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lastName">Last name</label>
+            <input id="lastName" class="form-control" formControlName="lastName"
+              [class.is-invalid]="form.controls.lastName.touched && form.controls.lastName.invalid" />
+            @if (form.controls.lastName.touched && form.controls.lastName.invalid) {
+              <div class="field-error">Last name is required.</div>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input id="email" type="email" class="form-control" formControlName="email"
+            [class.is-invalid]="form.controls.email.touched && form.controls.email.invalid" />
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <div class="field-error">Enter a valid email address.</div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="phone">Phone number <span class="muted">(optional)</span></label>
+          <input id="phone" class="form-control" formControlName="phoneNumber"
+            [class.is-invalid]="form.controls.phoneNumber.touched && form.controls.phoneNumber.invalid" />
+          @if (form.controls.phoneNumber.touched && form.controls.phoneNumber.invalid) {
+            <div class="field-error">Enter a valid phone number.</div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input id="password" type="password" class="form-control" formControlName="password"
+            [class.is-invalid]="form.controls.password.touched && form.controls.password.invalid" />
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <div class="field-error">Password must be at least 6 characters.</div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">I am registering as</label>
+          <div class="role-toggle">
+            <label class="role-option" [class.selected]="form.controls.role.value === 'CUSTOMER'">
+              <input type="radio" formControlName="role" value="CUSTOMER" />
+              <span>🙋 Customer</span>
+            </label>
+            <label class="role-option" [class.selected]="form.controls.role.value === 'SALON_OWNER'">
+              <input type="radio" formControlName="role" value="SALON_OWNER" />
+              <span>💈 Salon owner</span>
+            </label>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" type="submit" [disabled]="loading()">
+          {{ loading() ? 'Creating account...' : 'Create account' }}
+        </button>
+      </form>
+
+      <p class="muted text-center mt">
+        Already have an account? <a routerLink="/login">Sign in</a>
+      </p>
+    </div>
+  </div>
+</div>
